@@ -1,4 +1,4 @@
-streamlit
-numpy
-opencv-python-headless
-Pillow
+streamlit==1.2.0  # Example version, use the one you've tested locally
+numpy==1.21.3    # Example version, use the one you've tested locally
+opencv-contrib-python-headless==4.5.3.56
+Pillow==8.4.0    # Example version, use the one you've tested locally
