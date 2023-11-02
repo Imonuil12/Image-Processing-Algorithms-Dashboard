@@ -277,6 +277,8 @@ def spatial_filtering(img, kernel_size=3):
 # Title and a brief description for your dashboard
 st.title("Image Processing Dashboard. Algorithms to Enhance, Compress and Manipulate Images.")
 st.write("Upload an image and select an image processing technique to apply.")
+
+# Create a file uploader widget
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "png", "jpeg"])
 
 # Dropdown menu for category selection
@@ -311,39 +313,49 @@ elif category == "Image Segmentation":
         "Choose a segmentation algorithm",
         ["Region Growing Segmentation", "Thresholding", "Edge-Based Segmentation", "Region-Based Segmentation"]
     )
-
+    
 
 
 # The code for the algorithms
 
 if uploaded_file is not None:
+    # Open the image file with PIL and convert it to a NumPy array
     image = Image.open(uploaded_file)
-    st.image(image, caption='Uploaded Image.', use_column_width=True)
     original_image = np.array(image)
 
+    # Display the updated image
+    st.image(image, caption='Uploaded Image.', use_column_width=True)
+    
+    
+    # Setup columns for Before-After Comparison
+    col1, col2 = st.columns(2)
+    
+# Display the original image in the first column
+    col1.image(image, caption="Original Image", use_column_width = True)
+    
     try:
         # Convert the image to grayscale for thresholding and segmentation methods
         gray_image = cv2.cvtColor(original_image, cv2.COLOR_RGB2GRAY)
 
         # Check the selected algorithm and apply the corresponding operation
         if algorithm == "Grayscale":
-            st.image(gray_image, channels="GRAY", use_column_width=True)
+            col2.image(gray_image, caption = "Grayscale",channels="GRAY", use_column_width=True)
 
         elif algorithm == "Canny Edge Detection":
             edges = cv2.Canny(original_image, 100, 200)
-            st.image(edges, channels="GRAY", use_column_width=True)
+            col2.image(edges, caption="Canny Edge Detection", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Gaussian Blur":
             blurred_image = cv2.GaussianBlur(original_image, (5, 5), 0)
-            st.image(blurred_image, use_column_width=True)
+            col2.image(blurred_image, caption="Gaussian Blur", use_column_width=True)
 
         elif algorithm == "Simple Thresholding":
             ret, thresh = cv2.threshold(gray_image, 127, 255, cv2.THRESH_BINARY)
-            st.image(thresh, channels="GRAY", use_column_width=True)
+            col2.image(thresh, caption="Simple Thresholding", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Adaptive Thresholding":
             adaptive_thresh = cv2.adaptiveThreshold(gray_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 11, 2)
-            st.image(adaptive_thresh, channels="GRAY", use_column_width=True)
+            col2.image(adaptive_thresh, caption="Adaptive Thresholding", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Watershed Segmentation":
             ret, thresh = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
@@ -359,39 +371,39 @@ if uploaded_file is not None:
             markers[unknown == 255] = 0
             cv2.watershed(original_image, markers)
             original_image[markers == -1] = [0, 0, 255]
-            st.image(original_image, use_column_width=True)
+            col2.image(original_image, caption = "Watershed Segmentation", use_column_width=True)
 
         elif algorithm == "Median Filtering":
             filtered_image = median_filtering(gray_image)
-            st.image(filtered_image, channels="GRAY", use_column_width=True)
+            col2.image(filtered_image, caption="Median Filtering", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Mean Filtering":
             filtered_image = mean_filtering(gray_image)
-            st.image(filtered_image, channels="GRAY", use_column_width=True)
+            col2.image(filtered_image, caption="Mean Filtering", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Weighted Average Filtering":
             filtered_image = weighted_average_filtering(gray_image)
-            st.image(filtered_image, channels="GRAY", use_column_width=True)
+            col2.image(filtered_image, caption="Weighted Average Filtering", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Min Filtering":
             filtered_image = min_filtering(gray_image)
-            st.image(filtered_image, channels="GRAY", use_column_width=True)
+            col2.image(filtered_image, caption="Min Filtering", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Max Filtering":
             filtered_image = max_filtering(gray_image)
-            st.image(filtered_image, channels="GRAY", use_column_width=True)
+            col2.image(filtered_image, caption="Max Filtering", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Laplacian Enhancement":
             enhanced_image = laplacian_enhancement(gray_image)
-            st.image(enhanced_image, channels="GRAY", use_column_width=True)
+            col2.image(enhanced_image, caption="Laplacian Enhancement", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Nearest Neighbor Interpolation":
             resized_image = nearest_neighbor_interpolation(original_image)
-            st.image(resized_image, use_column_width=True)
+            col2.image(resized_image, caption="Nearest Neighbor Interpolation", use_column_width=True)
 
         elif algorithm == "Bilinear Interpolation":
             resized_image = bilinear_interpolation(original_image)
-            st.image(resized_image, use_column_width=True)
+            col2.image(resized_image, caption="Bilinear Interpolation", use_column_width=True)
 
         elif algorithm == "Run Length Encoding":
             runs = run_length_encoding(original_image)
@@ -400,7 +412,7 @@ if uploaded_file is not None:
         elif algorithm == "Region Growing Segmentation":
             seed = (gray_image.shape[1] // 2, gray_image.shape[0] // 2)  # Using the center pixel as seed
             segmented_image = region_growing_segmentation(original_image, seed)
-            st.image(segmented_image, channels="GRAY", use_column_width=True)
+            col2.image(segmented_image, caption = "Region growing segmentation",channels="GRAY", use_column_width=True)
 
         elif algorithm == "Huffman Coding":
             compressed_image, huff_codes = compress_with_huffman(gray_image)
@@ -410,7 +422,7 @@ if uploaded_file is not None:
             # Add a button for decoding
             if st.button('Decode'):
                 decompressed_image = decompress_with_huffman(compressed_image, huff_codes)
-                st.image(decompressed_image, caption="Decompressed Image", use_column_width=True)
+                col2.image(decompressed_image, caption="Decompressed Image", use_column_width=True)
 
         elif algorithm == "Arithmetic Encoding":
             encoded_value = arithmetic_encoding(gray_image)
@@ -418,56 +430,56 @@ if uploaded_file is not None:
             
         elif algorithm == "Image Scaling":
             scaled_image = image_scaling(original_image)
-            st.image(scaled_image, use_column_width=True)
+            col2.image(scaled_image, caption="Image Scaling", use_column_width=True)
 
         elif algorithm == "Image Negatives":
             negative_image = image_negatives(original_image)
-            st.image(negative_image, use_column_width=True)
+            col2.image(negative_image, caption="Image Negatives", use_column_width=True)
 
         elif algorithm == "Log Transformations":
             log_transformed_image = log_transformations(gray_image)
-            st.image(log_transformed_image, channels="GRAY", use_column_width=True)
+            col2.image(log_transformed_image, caption="Log Transformations", channels="GRAY", use_column_width=True)
 
-        elif algorithm == "Power-Law Transformations":
-            power_law_image = power_law_transformations(gray_image)
-            st.image(power_law_image, channels="GRAY", use_column_width=True)
+        elif algorithm == "Power-Law (Gamma) Transformations":
+            gamma_image = power_law_transformations(gray_image, gamma=1.5)  # You can adjust the gamma value as needed
+            col2.image(gamma_image, caption="Power-Law (Gamma) Transformations", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Min-Max Stretching":
             min_max_image = min_max_stretching(gray_image)
-            st.image(min_max_image, channels="GRAY", use_column_width=True)
+            col2.image(min_max_image, caption="Min-Max stretching", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Histogram Equalization":
             hist_eq_image = histogram_equalization(gray_image)
-            st.image(hist_eq_image, channels="GRAY", use_column_width=True)
+            col2.image(hist_eq_image, caption="Histogram Equalization", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Salt and Pepper":
             salt_pepper_image = add_salt_and_pepper_noise(original_image)
-            st.image(salt_pepper_image, use_column_width=True)
+            col2.image(salt_pepper_image, caption="Salt and papper", use_column_width=True)
 
         elif algorithm == "Gaussian Noise":
             gaussian_noise_image = add_gaussian_noise(original_image)
-            st.image(gaussian_noise_image, use_column_width=True)
+            col2.image(gaussian_noise_image, caption="Gaussian Noise", use_column_width=True)
 
         elif algorithm == "Speckle Noise":
             speckle_noise_image = add_speckle_noise(original_image)
-            st.image(speckle_noise_image, use_column_width=True)
+            col2.image(speckle_noise_image, caption="Speckle Noise" ,use_column_width=True)
 
         elif algorithm == "Convolution":
             # Example kernel for convolution (you can change it)
             kernel = np.array([[0, -1, 0], [-1, 4, -1], [0, -1, 0]])
             convoluted_image = convolution(original_image, kernel)
-            st.image(convoluted_image, use_column_width=True)
+            col2.image(convoluted_image, caption = "Convolution", use_column_width=True)
 
         elif algorithm == "Spatial Filtering":
             spatial_filtered_image = spatial_filtering(gray_image)
-            st.image(spatial_filtered_image, channels="GRAY", use_column_width=True)
+            col2.image(spatial_filtered_image, caption = "Spatial Filtering",channels="GRAY", use_column_width=True)
 
         elif algorithm == "Histogram Matching":
                 template_file = st.file_uploader("Choose a template image for histogram matching...", type=["jpg", "png", "jpeg"])
             
                 if template_file:
                     template_image = Image.open(template_file)
-                    st.image(template_image, caption='Template Image.', use_column_width=True)
+                    col2.image(template_image, caption='Template Image.', use_column_width=True)
                     template_image_array = np.array(template_image)
                     
                     # Convert the template image to grayscale
@@ -475,23 +487,24 @@ if uploaded_file is not None:
                     
                     # Apply histogram matching
                     matched_image = hist_match(gray_image, template_gray)
-                    st.image(matched_image, channels="GRAY", use_column_width=True)
+                    col2.image(matched_image, channels="GRAY", use_column_width=True)
                 else:
                     st.warning("Please upload a template image for histogram matching.")
                 
     
         elif algorithm == "Thresholding":
             ret, thresh = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-            st.image(thresh, channels="GRAY", use_column_width=True)
+            col2.image(thresh, caption = "Thresholding", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Edge-Based Segmentation":
             edges = cv2.Canny(gray_image, 100, 200)
-            st.image(edges, channels="GRAY", use_column_width=True)
+            col2.image(edges, caption="Edge-Based Segmentation", channels="GRAY", use_column_width=True)
 
         elif algorithm == "Region-Based Segmentation":
             seed = (gray_image.shape[1] // 2, gray_image.shape[0] // 2)  # Using the center pixel as seed
             segmented_image = region_growing_segmentation(original_image, seed)
-            st.image(segmented_image, channels="GRAY", use_column_width=True)
+            col2.image(segmented_image, caption="Region-Based Segmentation", channels="GRAY", use_column_width=True)
+
 
 
     except Exception as e:
