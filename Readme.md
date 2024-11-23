@@ -119,7 +119,7 @@ Special thanks to:
 Feel free to reach out if you have any questions or suggestions!
 
 - **GitHub**: [Imonuil12](https://github.com/Imonuil12)
-- **Email**: [your_email@example.com]
+- **Email**: [imasuleymanov@gmail.com]
 
 ---
 
