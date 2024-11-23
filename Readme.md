@@ -63,17 +63,6 @@ Welcome to the **Image Processing Algorithms Dashboard**! This project provides 
 
 ---
 
-## 🌟 Examples
-
-### Original Image:
-![Original Image](examples/original_image.jpg)
-
-### Processed Image:
-![Processed Image](examples/processed_image.jpg)
-
-> *(Replace the example images with your actual screenshots.)*
-
----
 
 ## 💡 Contribution
 
